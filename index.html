@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CumaCode Post Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=DM+Sans:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="topbar">
+  <span class="topbar-logo">CUMACODE</span>
+  <span>POST GENERATOR</span>
+  <span class="topbar-tag">#BayarCumaCuma</span>
+</div>
+
+<div class="app">
+
+  <!-- ── SIDEBAR ── -->
+  <div class="sidebar">
+
+    <!-- Template Type -->
+    <div class="sidebar-section">
+      <div class="section-label">Template</div>
+      <div class="toggle-group">
+        <button class="toggle-btn active" onclick="setTemplate('project')" id="btn-project">PROJECT</button>
+        <button class="toggle-btn" onclick="setTemplate('news')" id="btn-news">NEWS</button>
+      </div>
+    </div>
+
+    <!-- Aspect Ratio -->
+    <div class="sidebar-section">
+      <div class="section-label">Rasio</div>
+      <div class="toggle-group">
+        <button class="toggle-btn active" onclick="setRatio('square')" id="btn-sq">1:1</button>
+        <button class="toggle-btn" onclick="setRatio('portrait')" id="btn-pt">4:5</button>
+      </div>
+    </div>
+
+    <!-- Background -->
+    <div class="sidebar-section">
+      <div class="section-label">Background</div>
+      <div class="toggle-group">
+        <button class="toggle-btn active" onclick="setBgMode('solid')" id="btn-solid">SOLID</button>
+        <button class="toggle-btn" onclick="setBgMode('photo')" id="btn-photo">FOTO</button>
+      </div>
+
+      <!-- Solid colors -->
+      <div id="solid-opts">
+        <div class="color-row">
+          <div class="color-opt selected" style="background:#F5F500" onclick="setBgColor('#F5F500')" title="Kuning"></div>
+          <div class="color-opt" style="background:#0d0d0d" onclick="setBgColor('#0d0d0d')" title="Hitam"></div>
+          <div class="color-opt" style="background:#F8F8F2" onclick="setBgColor('#F8F8F2')" title="Putih"></div>
+          <div class="color-opt" style="background:#E63946" onclick="setBgColor('#E63946')" title="Merah"></div>
+          <div class="color-opt" style="background:#2196F3" onclick="setBgColor('#2196F3')" title="Biru"></div>
+          <div class="color-opt" style="background:#4CAF50" onclick="setBgColor('#4CAF50')" title="Hijau"></div>
+          <div class="color-opt color-opt-custom" title="Warna custom">
+            <input type="color" id="customBgColor" value="#F5F500" style="opacity:0;position:absolute;width:34px;height:34px;cursor:pointer" onchange="setBgColor(this.value)">
+            🎨
+          </div>
+        </div>
+      </div>
+
+      <!-- Photo upload (background) -->
+      <div id="photo-opts" style="display:none">
+        <div class="upload-area" onclick="document.getElementById('photoInput').click()">
+          <input type="file" id="photoInput" accept="image/*" onchange="loadPhoto(event)">
+          <div class="upload-icon">📸</div>
+          <div class="upload-text">Upload Foto</div>
+          <div class="upload-sub">JPG, PNG, WEBP</div>
+        </div>
+        <div class="field">
+          <label>Opacity Overlay</label>
+          <input type="range" id="overlayOpacity" min="0" max="90" value="45" oninput="updateOpacity(this.value)">
+          <div class="range-val" id="opacityVal">45%</div>
+        </div>
+        <div class="field">
+          <label>Warna Overlay</label>
+          <div class="color-row">
+            <div class="color-opt selected" style="background:#0d0d0d" onclick="setOverlayColor('#0d0d0d')" title="Hitam"></div>
+            <div class="color-opt" style="background:#F5F500" onclick="setOverlayColor('#F5F500')" title="Kuning"></div>
+            <div class="color-opt" style="background:#E63946" onclick="setOverlayColor('#E63946')" title="Merah"></div>
+            <div class="color-opt color-opt-custom" title="Custom">
+              <input type="color" id="customOverlayColor" value="#0d0d0d" style="opacity:0;position:absolute;width:34px;height:34px;cursor:pointer" onchange="setOverlayColor(this.value)">
+              🎨
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="sidebar-section">
+      <div class="section-label">Konten</div>
+
+      <!-- PROJECT fields -->
+      <div id="project-fields">
+
+        <!-- Foto Project (NEW) -->
+        <div class="field">
+          <label>Foto Project</label>
+          <div id="projectPhotoUploadArea" class="upload-area" onclick="document.getElementById('projectPhotoInput').click()">
+            <input type="file" id="projectPhotoInput" accept="image/*" onchange="loadProjectPhoto(event)">
+            <div class="upload-icon">🖼️</div>
+            <div class="upload-text">Upload Screenshot</div>
+            <div class="upload-sub">JPG, PNG, WEBP</div>
+          </div>
+          <img id="projectPhotoThumb" class="photo-thumb" alt="Project photo preview">
+          <button id="btnRemoveProjectPhoto" class="btn-remove-photo" onclick="removeProjectPhoto()">✕ Hapus Foto</button>
+        </div>
+
+        <!-- Posisi Foto (NEW) -->
+        <div class="field">
+          <label>Posisi Foto</label>
+          <div class="toggle-group toggle-group-5">
+            <button class="toggle-btn active" onclick="setProjectPhotoPos('none')" id="btn-ppos-none">TANPA</button>
+            <button class="toggle-btn" onclick="setProjectPhotoPos('top')" id="btn-ppos-top">ATAS</button>
+            <button class="toggle-btn" onclick="setProjectPhotoPos('middle')" id="btn-ppos-middle">TENGAH</button>
+            <button class="toggle-btn" onclick="setProjectPhotoPos('bottom')" id="btn-ppos-bot">BAWAH</button>
+            <button class="toggle-btn" onclick="setProjectPhotoPos('split')" id="btn-ppos-split">SPLIT</button>
+          </div>
+        </div>
+
+        <!-- Ukuran Foto (NEW) -->
+        <div class="field" id="projectPhotoSizeField" style="display:none">
+          <label>Ukuran Foto</label>
+          <input type="range" id="projectPhotoSize" min="30" max="100" value="80" oninput="setProjectPhotoSize(this.value)">
+          <div class="range-val" id="photoSizeVal">80%</div>
+        </div>
+
+        <div class="field">
+          <label>Judul Project</label>
+          <input type="text" id="proj-title" value="Website Toko Batik" oninput="render()">
+        </div>
+        <div class="field">
+          <label>Tech Stack</label>
+          <input type="text" id="proj-tech" value="Next.js · Tailwind · Supabase" oninput="render()">
+        </div>
+        <div class="field">
+          <label>Nama Klien / Kota</label>
+          <input type="text" id="proj-client" value="Bu Sari — Klaten" oninput="render()">
+        </div>
+        <div class="field">
+          <label>Deskripsi Singkat</label>
+          <textarea id="proj-desc" oninput="render()">Toko online batik lokal yang sekarang bisa jualan ke seluruh Indonesia. 🔥</textarea>
+        </div>
+      </div>
+
+      <!-- NEWS fields -->
+      <div id="news-fields" style="display:none">
+        <div class="field">
+          <label>Headline</label>
+          <input type="text" id="news-title" value="CumaCode Resmi Launch!" oninput="render()">
+        </div>
+        <div class="field">
+          <label>Sub-headline</label>
+          <input type="text" id="news-sub" value="Jasa coding bayar seikhlasnya" oninput="render()">
+        </div>
+        <div class="field">
+          <label>Body Text</label>
+          <textarea id="news-body" oninput="render()">Kami hadir untuk semua kalangan. Mahasiswa, UMKM, startup — semua bisa order sekarang.</textarea>
+        </div>
+        <div class="field">
+          <label>Label / Tag (opsional)</label>
+          <input type="text" id="news-tag" value="ANNOUNCEMENT" oninput="render()">
+        </div>
+      </div>
+    </div>
+
+    <!-- Accent Color -->
+    <div class="sidebar-section">
+      <div class="section-label">Warna Aksen</div>
+      <div class="color-row">
+        <div class="color-opt selected" style="background:#F5F500" onclick="setAccent('#F5F500')" title="Kuning"></div>
+        <div class="color-opt" style="background:#F8F8F2" onclick="setAccent('#F8F8F2')" title="Putih"></div>
+        <div class="color-opt" style="background:#E63946" onclick="setAccent('#E63946')" title="Merah"></div>
+        <div class="color-opt" style="background:#00E5FF" onclick="setAccent('#00E5FF')" title="Cyan"></div>
+        <div class="color-opt" style="background:#76FF03" onclick="setAccent('#76FF03')" title="Hijau neon"></div>
+        <div class="color-opt color-opt-custom" title="Custom">
+          <input type="color" id="customAccent" value="#F5F500" style="opacity:0;position:absolute;width:34px;height:34px;cursor:pointer" onchange="setAccent(this.value)">
+          🎨
+        </div>
+      </div>
+    </div>
+
+    <!-- Download -->
+    <div class="sidebar-section">
+      <button class="btn-primary" onclick="render()">↻ REFRESH PREVIEW</button>
+    </div>
+
+  </div>
+
+  <!-- ── CANVAS AREA ── -->
+  <div class="canvas-area">
+    <div class="canvas-wrap">
+      <canvas id="mainCanvas"></canvas>
+    </div>
+    <div class="canvas-info" id="canvasInfo">1080 × 1080 px · Square</div>
+    <div class="download-row">
+      <div class="dl-btn" onclick="download('png')">⬇ DOWNLOAD PNG</div>
+      <div class="dl-btn" onclick="download('jpg')">⬇ DOWNLOAD JPG</div>
+    </div>
+  </div>
+
+</div>
+
+<script src="js/main.js"></script>
+</body>
+</html>
