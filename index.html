@@ -129,6 +129,19 @@
           <div class="range-val" id="photoSizeVal">80%</div>
         </div>
 
+        <!-- Saran Caption AI -->
+        <div class="field">
+          <label>Saran Caption</label>
+          <button class="btn-generate-caption" id="btnGenerateCaption" onclick="generateCaptions()">
+            ✨ GENERATE CAPTION AI
+          </button>
+          <div id="captionLoading" class="caption-loading" style="display:none">
+            <span class="spinner"></span> AI lagi mikir...
+          </div>
+          <div id="captionError" class="caption-error" style="display:none"></div>
+          <div id="captionResults" class="caption-results" style="display:none"></div>
+        </div>
+
         <div class="field">
           <label>Judul Project</label>
           <input type="text" id="proj-title" value="Website Toko Batik" oninput="render()">

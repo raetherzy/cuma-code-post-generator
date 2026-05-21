@@ -1,0 +1,7 @@
+# Kredensial — JANGAN PERNAH commit
+server.md
+server/setup.sh
+
+# Server
+server/node_modules/
+server/.env

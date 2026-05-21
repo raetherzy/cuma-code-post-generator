@@ -584,6 +584,102 @@ function renderNews(W, H, textColor, isLightText, title, sub, body, tag) {
   ctx.textAlign = 'left';
 }
 
+// ── Caption Generator ──
+const API_BASE = location.protocol === 'file:'
+  ? 'http://62.146.237.6:3007/api'   // local dev: langsung ke server
+  : '/api';                            // Vercel: lewat rewrite proxy
+
+async function generateCaptions() {
+  const btn = document.getElementById('btnGenerateCaption');
+  const loading = document.getElementById('captionLoading');
+  const errorEl = document.getElementById('captionError');
+  const results = document.getElementById('captionResults');
+
+  const title = document.getElementById('proj-title').value.trim();
+  const tech = document.getElementById('proj-tech').value.trim();
+  const client = document.getElementById('proj-client').value.trim();
+  const desc = document.getElementById('proj-desc').value.trim();
+
+  if (!title && !desc) {
+    errorEl.textContent = 'Isi judul atau deskripsi dulu ya.';
+    errorEl.style.display = 'block';
+    results.style.display = 'none';
+    return;
+  }
+
+  btn.disabled = true;
+  loading.style.display = 'flex';
+  errorEl.style.display = 'none';
+  results.style.display = 'none';
+
+  try {
+    const res = await fetch(API_BASE + '/generate-captions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, tech, client, desc, template: state.template }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || 'Gagal menghubungi server.');
+    }
+
+    if (!data.captions || data.captions.length === 0) {
+      throw new Error('AI belum ngasih hasil. Coba lagi.');
+    }
+
+    renderCaptionCards(data.captions);
+  } catch (err) {
+    errorEl.textContent = err.message === 'Failed to fetch'
+      ? 'Gak bisa konek ke server. Pastikan server backend nyala.'
+      : err.message;
+    errorEl.style.display = 'block';
+    results.style.display = 'none';
+  } finally {
+    btn.disabled = false;
+    loading.style.display = 'none';
+  }
+}
+
+function renderCaptionCards(captions) {
+  const results = document.getElementById('captionResults');
+  const labels = ['Santai', 'Profesional', 'Singkat', 'Storytelling'];
+
+  results.innerHTML = captions
+    .map(
+      (c, i) => `
+    <div class="caption-card">
+      <div class="caption-card-header">
+        <span class="caption-card-label">Gaya ${labels[i] || 'Lain'}</span>
+        <button class="btn-copy-caption" onclick="copyCaption(this, '${escapeCaption(c)}')">COPY</button>
+      </div>
+      ${c}
+    </div>`
+    )
+    .join('');
+  results.style.display = 'block';
+}
+
+function escapeCaption(text) {
+  return text.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n');
+}
+
+function copyCaption(btn, text) {
+  const decoded = text.replace(/\\n/g, '\n').replace(/\\'/g, "'").replace(/\\\\/g, '\\');
+  navigator.clipboard.writeText(decoded).then(() => {
+    btn.textContent = 'COPIED!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'COPY';
+      btn.classList.remove('copied');
+    }, 2000);
+  }).catch(() => {
+    btn.textContent = 'GAGAL';
+    setTimeout(() => { btn.textContent = 'COPY'; }, 1500);
+  });
+}
+
 // ── Download ──
 function download(type) {
   const [W, H] = getSize();

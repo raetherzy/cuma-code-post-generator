@@ -310,6 +310,109 @@ body {
 .sidebar::-webkit-scrollbar-track { background: var(--white); }
 .sidebar::-webkit-scrollbar-thumb { background: var(--black); }
 
+/* ── CAPTION GENERATOR ── */
+.btn-generate-caption {
+  width: 100%;
+  background: linear-gradient(135deg, #F5F500, #FFB800);
+  border: var(--border);
+  padding: 12px;
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: transform 0.1s, box-shadow 0.1s;
+  color: var(--black);
+}
+.btn-generate-caption:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--black); }
+.btn-generate-caption:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--black); }
+.btn-generate-caption:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: var(--shadow);
+}
+
+.caption-loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: var(--gray);
+  margin-top: 10px;
+}
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 3px solid #ddd;
+  border-top: 3px solid var(--black);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.caption-error {
+  padding: 10px 12px;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  color: #E63946;
+  background: #fff0f0;
+  border: 2px solid #E63946;
+  margin-top: 10px;
+}
+
+.caption-results {
+  margin-top: 10px;
+}
+.caption-card {
+  border: var(--border);
+  padding: 12px;
+  margin-bottom: 8px;
+  background: #fafaf4;
+  position: relative;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--black);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.caption-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.caption-card-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--gray);
+  background: #eee;
+  padding: 2px 8px;
+}
+.btn-copy-caption {
+  background: var(--black);
+  color: var(--yellow);
+  border: none;
+  padding: 4px 10px;
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.btn-copy-caption:hover { background: #333; }
+.btn-copy-caption.copied { background: #4CAF50; color: #fff; }
+
 @media (max-width: 700px) {
   .app { grid-template-columns: 1fr; }
   .sidebar { border-right: none; border-bottom: var(--border); }
