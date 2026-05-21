@@ -593,7 +593,6 @@ async function generateCaptions() {
   const btn = document.getElementById('btnGenerateCaption');
   const loading = document.getElementById('captionLoading');
   const errorEl = document.getElementById('captionError');
-  const results = document.getElementById('captionResults');
 
   const title = document.getElementById('proj-title').value.trim();
   const tech = document.getElementById('proj-tech').value.trim();
@@ -603,14 +602,12 @@ async function generateCaptions() {
   if (!title && !desc) {
     errorEl.textContent = 'Isi judul atau deskripsi dulu ya.';
     errorEl.style.display = 'block';
-    results.style.display = 'none';
     return;
   }
 
   btn.disabled = true;
   loading.style.display = 'flex';
   errorEl.style.display = 'none';
-  results.style.display = 'none';
 
   try {
     const res = await fetch(API_BASE + '/generate-captions', {
@@ -629,24 +626,24 @@ async function generateCaptions() {
       throw new Error('AI belum ngasih hasil. Coba lagi.');
     }
 
-    renderCaptionCards(data.captions);
+    openCaptionModal(data.captions);
   } catch (err) {
     errorEl.textContent = err.message === 'Failed to fetch'
       ? 'Gak bisa konek ke server. Pastikan server backend nyala.'
       : err.message;
     errorEl.style.display = 'block';
-    results.style.display = 'none';
   } finally {
     btn.disabled = false;
     loading.style.display = 'none';
   }
 }
 
-function renderCaptionCards(captions) {
-  const results = document.getElementById('captionResults');
+function openCaptionModal(captions) {
+  const modal = document.getElementById('captionModal');
+  const body = document.getElementById('captionModalBody');
   const labels = ['Santai', 'Profesional', 'Singkat', 'Storytelling'];
 
-  results.innerHTML = captions
+  body.innerHTML = captions
     .map(
       (c, i) => `
     <div class="caption-card">
@@ -658,8 +655,22 @@ function renderCaptionCards(captions) {
     </div>`
     )
     .join('');
-  results.style.display = 'block';
+
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
 }
+
+function closeCaptionModal() {
+  document.getElementById('captionModal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('click', function(e) {
+  if (e.target.id === 'captionModal') closeCaptionModal();
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeCaptionModal();
+});
 
 function escapeCaption(text) {
   return text.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n');

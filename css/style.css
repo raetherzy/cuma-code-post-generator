@@ -365,27 +365,93 @@ body {
   margin-top: 10px;
 }
 
-.caption-results {
-  margin-top: 10px;
+/* ── CAPTION MODAL ── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(13,13,13,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+  animation: fadeIn 0.2s ease;
 }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.modal-card {
+  background: var(--white);
+  border: var(--border);
+  box-shadow: 12px 12px 0 var(--black);
+  width: 100%;
+  max-width: 580px;
+  max-height: 82vh;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.25s ease;
+}
+@keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: var(--border);
+  background: var(--black);
+  color: var(--yellow);
+}
+.modal-title {
+  font-family: 'Space Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.modal-close {
+  background: none;
+  border: 2px solid var(--yellow);
+  color: var(--yellow);
+  width: 32px;
+  height: 32px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.1s;
+  font-family: 'Space Mono', monospace;
+  line-height: 1;
+  padding: 0;
+}
+.modal-close:hover { background: var(--yellow); color: var(--black); }
+
+.modal-body {
+  padding: 16px 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
 .caption-card {
   border: var(--border);
-  padding: 12px;
-  margin-bottom: 8px;
+  padding: 14px;
+  margin-bottom: 10px;
   background: #fafaf4;
-  position: relative;
   font-family: 'DM Sans', sans-serif;
-  font-size: 12px;
-  line-height: 1.6;
+  font-size: 13px;
+  line-height: 1.65;
   color: var(--black);
   white-space: pre-wrap;
   word-break: break-word;
 }
+.caption-card:last-child { margin-bottom: 0; }
+
 .caption-card-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 .caption-card-label {
   font-family: 'Space Mono', monospace;
@@ -401,7 +467,7 @@ body {
   background: var(--black);
   color: var(--yellow);
   border: none;
-  padding: 4px 10px;
+  padding: 5px 12px;
   font-family: 'Space Mono', monospace;
   font-size: 9px;
   font-weight: 700;
@@ -412,6 +478,13 @@ body {
 }
 .btn-copy-caption:hover { background: #333; }
 .btn-copy-caption.copied { background: #4CAF50; color: #fff; }
+
+@media (max-width: 600px) {
+  .modal-overlay { padding: 10px; }
+  .modal-card { max-height: 90vh; }
+  .modal-body { padding: 12px 14px; }
+  .caption-card { font-size: 12px; padding: 10px; }
+}
 
 @media (max-width: 700px) {
   .app { grid-template-columns: 1fr; }
