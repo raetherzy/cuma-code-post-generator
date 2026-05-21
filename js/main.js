@@ -264,11 +264,9 @@ function render() {
 
 // ── PROJECT: Original (no photo) ──
 function renderProjectOriginal(W, H, textColor, isLightText, title, tech, client, desc) {
-  // Top accent bar
   ctx.fillStyle = state.accentColor;
   ctx.fillRect(0, 0, W, 14);
 
-  // "PROJECT SHOWCASE" label
   const labelBg = textColor;
   const labelText = isLightText ? '#0d0d0d' : '#F8F8F2';
   ctx.fillStyle = labelBg;
@@ -277,34 +275,30 @@ function renderProjectOriginal(W, H, textColor, isLightText, title, tech, client
   ctx.fillStyle = labelText;
   ctx.fillText('PROJECT SHOWCASE', P + 16, 82);
 
-  // Title
-  ctx.font = `900 ${H === 1350 ? 108 : 96}px 'Bebas Neue', cursive`;
+  const titleFontSize = H === 1350 ? 108 : 96;
+  const titleBaseline = H * 0.32;
+  ctx.font = `900 ${titleFontSize}px 'Bebas Neue', cursive`;
   ctx.fillStyle = textColor;
-  const titleLines = wrapText(ctx, title.toUpperCase(), P, H * 0.32, W - P*2, H === 1350 ? 108 : 100);
+  const titleLines = wrapText(ctx, title.toUpperCase(), P, titleBaseline, W - P*2, titleFontSize);
 
-  // Separator
-  const sepY = H * 0.32 + titleLines * (H === 1350 ? 108 : 100) + 20;
+  const sepY = titleBaseline + (titleLines - 1) * titleFontSize + 20;
   ctx.fillStyle = state.accentColor;
   ctx.fillRect(P, sepY, W - P*2, 8);
 
-  // Tech stack
   ctx.font = `700 28px 'Space Mono', monospace`;
   ctx.fillStyle = hexToRgba(textColor, 0.55);
   ctx.fillText(tech, P, sepY + 52);
 
-  // Desc
-  ctx.font = `400 ${H === 1350 ? 38 : 34}px 'DM Sans', sans-serif`;
+  const descFontSize = H === 1350 ? 38 : 34;
+  ctx.font = `400 ${descFontSize}px 'DM Sans', sans-serif`;
   ctx.fillStyle = hexToRgba(textColor, 0.85);
-  wrapText(ctx, desc, P, sepY + 105, W - P*2, 48);
+  wrapText(ctx, desc, P, sepY + 105, W - P*2, descFontSize * 1.45);
 
-  // Corner decoration
   ctx.strokeStyle = state.accentColor;
   ctx.lineWidth = 5;
-  ctx.strokeRect(P - 10, H * 0.28 - 20, W - P*2 + 20, 8);
+  ctx.strokeRect(P - 10, titleBaseline - titleFontSize + 14, W - P*2 + 20, 8);
 
-  // Bottom bar
   renderBottomBarProject(W, H, textColor, client);
-
   ctx.textAlign = 'left';
 }
 
@@ -313,195 +307,198 @@ function renderProjectWithPhoto(W, H, textColor, isLightText, title, tech, clien
   const img = state.projectPhoto;
   if (!img) return;
 
-  // Top accent bar always
   ctx.fillStyle = state.accentColor;
   ctx.fillRect(0, 0, W, 14);
 
+  const labelBg = textColor;
+  const labelText = isLightText ? '#0d0d0d' : '#F8F8F2';
+
   if (photoPos === 'top') {
-    // Photo at top
-    const photoH = H * 0.42 * photoSize;
+    const photoH = H * 0.40 * photoSize;
     const photoY = ACCENT_BAR_H + GAP;
     drawPhotoCover(img, P, photoY, W - P*2, photoH);
     drawProjectPhotoFrame(P, photoY, W - P*2, photoH);
 
-    let curY = photoY + photoH + GAP + 10;
+    const titleFontSize = H === 1350 ? 80 : 68;
+    const descFontSize = H === 1350 ? 32 : 28;
+    const descLineH = descFontSize * 1.5;
+
+    let curY = photoY + photoH + 28;
 
     // Label
-    const labelBg = textColor;
-    const labelText = isLightText ? '#0d0d0d' : '#F8F8F2';
     ctx.fillStyle = labelBg;
     ctx.fillRect(P, curY, 360, 48);
     ctx.font = `700 22px 'Space Mono', monospace`;
     ctx.fillStyle = labelText;
     ctx.fillText('PROJECT SHOWCASE', P + 16, curY + 32);
-    curY += 68;
+    curY += 48 + 30;
 
     // Title
-    const titleFontSize = H === 1350 ? 80 : 68;
     ctx.font = `900 ${titleFontSize}px 'Bebas Neue', cursive`;
     ctx.fillStyle = textColor;
-    const titleLines = wrapText(ctx, title.toUpperCase(), P, curY, W - P*2, titleFontSize);
-    curY += titleLines * titleFontSize + GAP;
+    const tLines = wrapText(ctx, title.toUpperCase(), P, curY + titleFontSize, W - P*2, titleFontSize);
+    curY += titleFontSize + (tLines - 1) * titleFontSize + 30;
 
     // Separator
     ctx.fillStyle = state.accentColor;
     ctx.fillRect(P, curY, W - P*2, 6);
-    curY += 26;
+    curY += 6 + 30;
 
     // Tech
     ctx.font = `700 24px 'Space Mono', monospace`;
     ctx.fillStyle = hexToRgba(textColor, 0.55);
-    ctx.fillText(tech, P, curY);
-    curY += 38;
+    ctx.fillText(tech, P, curY + 24);
+    curY += 24 + 30;
 
     // Desc
-    const descFontSize = H === 1350 ? 32 : 28;
     ctx.font = `400 ${descFontSize}px 'DM Sans', sans-serif`;
     ctx.fillStyle = hexToRgba(textColor, 0.85);
-    wrapText(ctx, desc, P, curY, W - P*2, descFontSize * 1.5);
+    wrapText(ctx, desc, P, curY + descFontSize, W - P*2, descLineH);
 
-    // Bottom bar
     renderBottomBarProject(W, H, textColor, client);
 
   } else if (photoPos === 'middle') {
-    // Label at top
-    const labelBg = textColor;
-    const labelText = isLightText ? '#0d0d0d' : '#F8F8F2';
+    const titleFontSize = H === 1350 ? 76 : 64;
+    const descFontSize = H === 1350 ? 30 : 26;
+    const descLineH = descFontSize * 1.45;
+    const photoH = H * 0.33 * photoSize;
+
+    let curY = 50;
+
+    // Label
     ctx.fillStyle = labelBg;
-    ctx.fillRect(P, 50, 360, 48);
+    ctx.fillRect(P, curY, 360, 48);
     ctx.font = `700 22px 'Space Mono', monospace`;
     ctx.fillStyle = labelText;
-    ctx.fillText('PROJECT SHOWCASE', P + 16, 82);
+    ctx.fillText('PROJECT SHOWCASE', P + 16, curY + 32);
+    curY += 48 + 30;
 
     // Title
-    const titleFontSize = H === 1350 ? 72 : 64;
     ctx.font = `900 ${titleFontSize}px 'Bebas Neue', cursive`;
     ctx.fillStyle = textColor;
-    const titleLines = wrapText(ctx, title.toUpperCase(), P, 130, W - P*2, titleFontSize);
-    let curY = 130 + titleLines * titleFontSize + GAP;
+    const tLines = wrapText(ctx, title.toUpperCase(), P, curY + titleFontSize, W - P*2, titleFontSize);
+    curY += titleFontSize + (tLines - 1) * titleFontSize + 20;
 
     // Photo in middle
-    const photoH = H * 0.35 * photoSize;
     drawPhotoCover(img, P, curY, W - P*2, photoH);
     drawProjectPhotoFrame(P, curY, W - P*2, photoH);
-    curY += photoH + GAP + 10;
+    curY += photoH + 24;
 
     // Accent line
     ctx.fillStyle = state.accentColor;
     ctx.fillRect(P, curY, W - P*2, 6);
-    curY += 26;
+    curY += 6 + 28;
 
     // Tech
     ctx.font = `700 24px 'Space Mono', monospace`;
     ctx.fillStyle = hexToRgba(textColor, 0.55);
-    ctx.fillText(tech, P, curY);
-    curY += 36;
+    ctx.fillText(tech, P, curY + 24);
+    curY += 24 + 28;
 
     // Desc
-    const descFontSize = H === 1350 ? 30 : 26;
     ctx.font = `400 ${descFontSize}px 'DM Sans', sans-serif`;
     ctx.fillStyle = hexToRgba(textColor, 0.85);
-    wrapText(ctx, desc, P, curY, W - P*2, descFontSize * 1.4);
+    wrapText(ctx, desc, P, curY + descFontSize, W - P*2, descLineH);
 
-    // Bottom bar
     renderBottomBarProject(W, H, textColor, client);
 
   } else if (photoPos === 'bottom') {
+    const titleFontSize = H === 1350 ? 76 : 64;
+    const descFontSize = H === 1350 ? 30 : 26;
+    const descLineH = descFontSize * 1.45;
+
+    let curY = 50;
+
     // Label
-    const labelBg = textColor;
-    const labelText = isLightText ? '#0d0d0d' : '#F8F8F2';
     ctx.fillStyle = labelBg;
-    ctx.fillRect(P, 50, 360, 48);
+    ctx.fillRect(P, curY, 360, 48);
     ctx.font = `700 22px 'Space Mono', monospace`;
     ctx.fillStyle = labelText;
-    ctx.fillText('PROJECT SHOWCASE', P + 16, 82);
+    ctx.fillText('PROJECT SHOWCASE', P + 16, curY + 32);
+    curY += 48 + 30;
 
     // Title
-    const titleFontSize = H === 1350 ? 72 : 64;
     ctx.font = `900 ${titleFontSize}px 'Bebas Neue', cursive`;
     ctx.fillStyle = textColor;
-    const titleLines = wrapText(ctx, title.toUpperCase(), P, 140, W - P*2, titleFontSize);
-    let curY = 140 + titleLines * titleFontSize + GAP;
+    const tLines = wrapText(ctx, title.toUpperCase(), P, curY + titleFontSize, W - P*2, titleFontSize);
+    curY += titleFontSize + (tLines - 1) * titleFontSize + 28;
 
     // Separator
     ctx.fillStyle = state.accentColor;
     ctx.fillRect(P, curY, W - P*2, 6);
-    curY += 26;
+    curY += 6 + 28;
 
     // Tech
     ctx.font = `700 24px 'Space Mono', monospace`;
     ctx.fillStyle = hexToRgba(textColor, 0.55);
-    ctx.fillText(tech, P, curY);
-    curY += 36;
+    ctx.fillText(tech, P, curY + 24);
+    curY += 24 + 28;
 
     // Desc
-    const descFontSize = H === 1350 ? 30 : 26;
     ctx.font = `400 ${descFontSize}px 'DM Sans', sans-serif`;
     ctx.fillStyle = hexToRgba(textColor, 0.85);
-    const descLines = wrapText(ctx, desc, P, curY, W - P*2, descFontSize * 1.4);
-    curY += descLines * descFontSize * 1.4 + GAP;
+    const dLines = wrapText(ctx, desc, P, curY + descFontSize, W - P*2, descLineH);
+    curY += descFontSize + (dLines - 1) * descLineH + 24;
 
-    // Photo at bottom (above bottom bar)
-    const photoMaxH = H - BOTTOM_BAR_H - curY - 10;
-    const photoH = Math.min(photoMaxH, H * 0.35) * photoSize;
-    if (photoH > 50) {
+    // Photo above bottom bar (takes remaining space)
+    const photoMaxH = H - BOTTOM_BAR_H - curY - 12;
+    const photoH = Math.max(80, photoMaxH * 0.85);
+    if (photoH > 60) {
       drawPhotoCover(img, P, curY, W - P*2, photoH);
       drawProjectPhotoFrame(P, curY, W - P*2, photoH);
     }
 
-    // Bottom bar
     renderBottomBarProject(W, H, textColor, client);
 
   } else if (photoPos === 'split') {
     const splitRatio = 0.48;
-    const photoW = (W - P*3) * splitRatio;
-    const photoH = H - ACCENT_BAR_H - BOTTOM_BAR_H - GAP*3;
+    const photoW = (W - P * 3) * splitRatio;
+    const photoH = H - ACCENT_BAR_H - BOTTOM_BAR_H - GAP * 3;
     const photoX = P;
     const photoY = ACCENT_BAR_H + GAP;
 
-    // Photo on left
     drawPhotoCover(img, photoX, photoY, photoW, photoH);
     drawProjectPhotoFrame(photoX, photoY, photoW, photoH);
 
-    // Text on right
-    const textX = photoX + photoW + GAP + 10;
+    const textX = photoX + photoW + GAP + 14;
     const textW = W - textX - P;
+    const titleFontSize = H === 1350 ? 64 : 54;
+    const descFontSize = H === 1350 ? 26 : 22;
+    const descLineH = descFontSize * 1.45;
+
+    let curY = 50;
 
     // Label
-    const labelBg = textColor;
-    const labelText = isLightText ? '#0d0d0d' : '#F8F8F2';
     ctx.fillStyle = labelBg;
     const labelW = Math.min(textW, 300);
-    ctx.fillRect(textX, 50, labelW, 44);
+    ctx.fillRect(textX, curY, labelW, 44);
     ctx.font = `700 20px 'Space Mono', monospace`;
     ctx.fillStyle = labelText;
-    ctx.fillText('PROJECT SHOWCASE', textX + 14, 80);
+    ctx.fillText('PROJECT SHOWCASE', textX + 14, curY + 30);
+    curY += 44 + 32;
 
     // Title
-    const titleFontSize = H === 1350 ? 64 : 54;
     ctx.font = `900 ${titleFontSize}px 'Bebas Neue', cursive`;
     ctx.fillStyle = textColor;
-    const titleLines = wrapText(ctx, title.toUpperCase(), textX, 140, textW, titleFontSize);
-    let curY = 140 + titleLines * titleFontSize + GAP;
+    const tLines = wrapText(ctx, title.toUpperCase(), textX, curY + titleFontSize, textW, titleFontSize);
+    curY += titleFontSize + (tLines - 1) * titleFontSize + 28;
 
     // Accent line
     ctx.fillStyle = state.accentColor;
     ctx.fillRect(textX, curY, 100, 5);
-    curY += 22;
+    curY += 5 + 24;
 
     // Tech
     ctx.font = `700 20px 'Space Mono', monospace`;
     ctx.fillStyle = hexToRgba(textColor, 0.55);
-    ctx.fillText(tech, textX, curY);
-    curY += 32;
+    ctx.fillText(tech, textX, curY + 20);
+    curY += 20 + 24;
 
     // Desc
-    const descFontSize = H === 1350 ? 26 : 22;
     ctx.font = `400 ${descFontSize}px 'DM Sans', sans-serif`;
     ctx.fillStyle = hexToRgba(textColor, 0.85);
-    wrapText(ctx, desc, textX, curY, textW, descFontSize * 1.4);
+    wrapText(ctx, desc, textX, curY + descFontSize, textW, descLineH);
 
-    // Bottom bar
     renderBottomBarProject(W, H, textColor, client);
   }
 
