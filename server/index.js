@@ -18,13 +18,15 @@ app.use(express.json());
 
 app.post('/api/generate-captions', async (req, res) => {
   try {
-    const { title, tech, client, desc, template } = req.body;
+    const { title, tech, client, desc, template, customPrompt } = req.body;
 
-    if (!title && !desc) {
-      return res.status(400).json({ error: 'Minimal judul atau deskripsi harus diisi.' });
+    if (!customPrompt && !title && !desc) {
+      return res.status(400).json({ error: 'Isi prompt custom atau data konten dulu.' });
     }
 
-    const prompt = buildPrompt({ title, tech, client, desc, template });
+    const prompt = customPrompt && customPrompt.trim()
+      ? buildCustomPrompt(customPrompt)
+      : buildPrompt({ title, tech, client, desc, template });
 
     const completion = await groq.chat.completions.create({
       model: 'llama-3.3-70b-versatile',
@@ -84,6 +86,25 @@ function parseCaptions(raw) {
     .map((c) => c.trim())
     .filter((c) => c.length > 10)
     .slice(0, 5);
+}
+
+function buildCustomPrompt(userPrompt) {
+  return `Buat 4 caption social media yang berbeda gaya sesuai permintaan user berikut. Format: tiap caption dipisahkan dengan "---" (tiga strip). JANGAN kasih nomor. JANGAN kasih label. Langsung caption-nya aja.
+
+User minta: ${userPrompt}
+
+Buat caption dengan tone berbeda-beda:
+1. Casual / santai kayak ngobrol
+2. Professional / formal
+3. Short punchy (1-2 kalimat aja)
+4. Storytelling / naratif
+
+Rules:
+- Pakai bahasa Indonesia, English cuma buat tech terms
+- Kasih 1-2 emoji yang relevan di setiap caption
+- Sisipkan hashtag yang sesuai dengan konteks (jangan dipaksa)
+- Jangan terlalu panjang, max 3-4 kalimat per caption
+- JANGAN pakai tanda petik (") di dalam caption, ganti ke petik satu (')`;
 }
 
 app.get('/health', (_req, res) => res.json({ ok: true }));

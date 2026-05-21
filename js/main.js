@@ -590,19 +590,40 @@ const API_BASE = location.protocol === 'file:'
   : '/api';                            // Vercel: lewat rewrite proxy
 
 async function generateCaptions() {
-  const btn = document.getElementById('btnGenerateCaption');
-  const loading = document.getElementById('captionLoading');
-  const errorEl = document.getElementById('captionError');
+  const tpl = state.template;
+  const btnId = tpl === 'project' ? 'btnGenerateCaption' : 'btnGenerateCaptionNews';
+  const loadingId = tpl === 'project' ? 'captionLoading' : 'captionLoadingNews';
+  const errorId = tpl === 'project' ? 'captionError' : 'captionErrorNews';
 
-  const title = document.getElementById('proj-title').value.trim();
-  const tech = document.getElementById('proj-tech').value.trim();
-  const client = document.getElementById('proj-client').value.trim();
-  const desc = document.getElementById('proj-desc').value.trim();
+  const btn = document.getElementById(btnId);
+  const loading = document.getElementById(loadingId);
+  const errorEl = document.getElementById(errorId);
 
-  if (!title && !desc) {
-    errorEl.textContent = 'Isi judul atau deskripsi dulu ya.';
-    errorEl.style.display = 'block';
-    return;
+  let body;
+
+  if (tpl === 'project') {
+    const title = document.getElementById('proj-title').value.trim();
+    const tech = document.getElementById('proj-tech').value.trim();
+    const client = document.getElementById('proj-client').value.trim();
+    const desc = document.getElementById('proj-desc').value.trim();
+
+    if (!title && !desc) {
+      errorEl.textContent = 'Isi judul atau deskripsi dulu ya.';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    body = { title, tech, client, desc, template: 'project' };
+  } else {
+    const customPrompt = document.getElementById('news-custom-prompt').value.trim();
+
+    if (!customPrompt) {
+      errorEl.textContent = 'Tulis prompt custom dulu di atas.';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    body = { customPrompt, template: 'news' };
   }
 
   btn.disabled = true;
@@ -613,7 +634,7 @@ async function generateCaptions() {
     const res = await fetch(API_BASE + '/generate-captions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title, tech, client, desc, template: state.template }),
+      body: JSON.stringify(body),
     });
 
     const data = await res.json();

@@ -177,6 +177,21 @@
           <label>Label / Tag (opsional)</label>
           <input type="text" id="news-tag" value="ANNOUNCEMENT" oninput="render()">
         </div>
+
+        <!-- Saran Caption AI (custom prompt) -->
+        <div class="field">
+          <label>Prompt Custom Caption</label>
+          <textarea id="news-custom-prompt" placeholder="Tulis keinginan kamu...&#10;contoh: Bikin caption tentang update fitur terbaru CumaCode yang sekarang bisa payment gateway dan auto-deploy"></textarea>
+        </div>
+        <div class="field">
+          <button class="btn-generate-caption" id="btnGenerateCaptionNews" onclick="generateCaptions()">
+            ✨ GENERATE CAPTION AI
+          </button>
+          <div id="captionLoadingNews" class="caption-loading" style="display:none">
+            <span class="spinner"></span> AI lagi mikir...
+          </div>
+          <div id="captionErrorNews" class="caption-error" style="display:none"></div>
+        </div>
       </div>
     </div>
 
